@@ -32,6 +32,9 @@ Test your installation by running the command line::
 
 And go on http://127.0.0.1:5000 , you should see the google homepage.
 
+    $ tproxy examples/transparent.py -b 0.0.0.0:8887
+
+And go on http://127.0.0.1:8887, you should see the google homepage.
 
 Usage
 -----

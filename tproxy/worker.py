@@ -57,10 +57,25 @@ class Worker(ProxyServer):
         return os.getpid()
 
     def init_process(self):
-        #gevent doesn't reinitialize dns for us after forking
-        #here's the workaround
-        gevent.core.dns_shutdown(fail_requests=1)
-        gevent.core.dns_init()
+
+        # HACK:
+        # https://github.com/benoitc/gunicorn/issues/336
+        # https://github.com/benoitc/gunicorn/blob/master/gunicorn/workers/ggevent.py#L167
+        # if gevent.version_info[0] == 0:
+        from gevent import version_info
+        if version_info[0] == 0:
+            # reinit the hub
+            import gevent.core
+            gevent.core.reinit()
+
+            # gevent 0.13 and older doesn't reinitialize dns for us after forking
+            # here's the workaround
+            gevent.core.dns_shutdown(fail_requests=1)
+            gevent.core.dns_init()
+        else:
+            # reinit the hub
+            from gevent import hub
+            hub.reinit()
 
         util.set_owner_process(self.cfg.uid, self.cfg.gid)
 
@@ -71,7 +86,6 @@ class Worker(ProxyServer):
         self.PIPE = os.pipe()
         map(util.set_non_blocking, self.PIPE)
         map(util.close_on_exec, self.PIPE)
-        
 
         # Prevent fd inherientence
         util.close_on_exec(self.socket)
