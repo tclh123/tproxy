@@ -15,6 +15,7 @@ from gevent.hub import get_hub
 from gevent import monkey
 monkey.noisy = False
 monkey.patch_all()
+# FIXME: Exception KeyError: KeyError(36922384,) in <module 'threading' from '/usr/lib/python2.7/threading.pyc'> ignored'
 
 from . import util
 from .arbiter import Arbiter
