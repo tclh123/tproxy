@@ -20,28 +20,37 @@ import random
 import resource
 import socket
 
-from gevent.hub import fork
+# from gevent.hub import fork
+# add support for gevent 1.0  # https://github.com/benoitc/tproxy/pull/6
+from gevent import version_info
+if version_info[0] > 0:
+    from gevent.os import fork
+else:
+    from gevent.hub import fork
+
 try:
     from setproctitle import setproctitle
+
     def _setproctitle(title):
-        setproctitle("tproxy: %s" % title) 
+        setproctitle("tproxy: %s" % title)
 except ImportError:
     def _setproctitle(title):
         return
 
 MAXFD = 1024
 if (hasattr(os, "devnull")):
-   REDIRECT_TO = os.devnull
+    REDIRECT_TO = os.devnull
 else:
-   REDIRECT_TO = "/dev/null"
+    REDIRECT_TO = "/dev/null"
+
 
 def is_ipv6(addr):
     try:
         socket.inet_pton(socket.AF_INET6, addr)
-    except socket.error: # not a valid address
+    except socket.error:  # not a valid address
         return False
     return True
-        
+
 
 def parse_address(netloc, default_port=5000):
     if isinstance(netloc, tuple):
