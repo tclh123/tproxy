@@ -102,14 +102,15 @@ class Worker(ProxyServer):
     def refresh_name(self):
         title = "worker"
         if self.name is not None:
-            title += " [%s]"
+            # https://github.com/benoitc/tproxy/pull/7
+            title += " [%s]" % (self.name,)
         title = "%s - handling %s connections" % (title, self.nb_connections)
         util._setproctitle(title)
 
     def stop_accepting(self):
         title = "worker"
         if self.name is not None:
-            title += " [%s]"
+            title += " [%s]" % (self.name,)
         title = "%s - stop accepting" % title
         util._setproctitle(title)
         super(Worker, self).stop_accepting()
