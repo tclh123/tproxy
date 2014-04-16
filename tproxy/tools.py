@@ -5,7 +5,8 @@
 
 
 try:
-    from importlibe import import_module
+    # https://github.com/benoitc/tproxy/pull/10
+    from importlib import import_module
 except ImportError:
     import sys
     
