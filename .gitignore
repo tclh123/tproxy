@@ -12,3 +12,4 @@ tproxy.egg-info
 nohup.out
 .coverage
 doc/.sass-cache
+venv
